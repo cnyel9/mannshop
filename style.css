@@ -1,0 +1,201 @@
+/* Menambahkan @tailwind directives agar @apply berfungsi di file CSS eksternal */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- STYLE ASLI ANDA (DIPINDAHKAN DARI HTML) --- */
+:root {
+  --primary-color: #10b981; /* Emerald 500 */
+  --primary-hover: #059669; /* Emerald 600 */
+}
+body {
+  font-family: "Inter", sans-serif;
+  @apply bg-gray-100; /* Menggunakan @apply untuk konsistensi */
+}
+.text-primary {
+  color: var(--primary-color);
+}
+.bg-primary {
+  background-color: var(--primary-color);
+}
+.bg-primary-hover:hover {
+  background-color: var(--primary-hover);
+}
+.focus-ring-primary:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+.focus-ring-primary:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+/* Style kustom untuk box shadow */
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+.modal-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab styling (Termasuk style 'menyala' Anda) */
+.tab-btn {
+  @apply flex items-center gap-3 rounded-lg px-4 py-3 text-gray-600 transition;
+}
+.tab-btn.active {
+  @apply bg-emerald-100 text-primary font-semibold shadow-lg shadow-emerald-400/50;
+}
+.tab-btn:not(.active):hover {
+  @apply bg-gray-200 text-gray-900;
+}
+.tab-content {
+  @apply hidden;
+}
+.tab-content.active {
+  @apply block;
+}
+
+/* Style untuk mobile menu */
+#mobile-menu {
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+}
+#mobile-menu.open {
+  transform: translateX(0);
+}
+
+/* --- STYLE BARU UNTUK STRUKTUR PROFIL --- */
+
+/* Menyembunyikan scrollbar (sudah ada di file lama Anda) */
+.scroll-hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.scroll-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sedikit style untuk placeholder gambar QRIS */
+img[src*="placehold.co"] {
+  border: 2px dashed #e0e0e0;
+}
+
+/* Kontainer utama bagian profil */
+.profile-section {
+  @apply space-y-6;
+}
+
+/* Judul "Pengaturan Akun" */
+.profile-title {
+  @apply text-3xl font-bold text-gray-900 border-b pb-2;
+}
+
+/* Layout grid 2 kolom */
+.profile-container {
+  @apply max-w-6xl mx-auto md:grid md:grid-cols-12 md:gap-8;
+}
+
+/* Kolom Kiri (Sidebar) */
+.profile-sidebar {
+  @apply md:col-span-3;
+}
+
+/* Navigasi di sidebar */
+.profile-nav {
+  @apply flex md:flex-col p-4 space-x-2 md:space-x-0 md:space-y-3 overflow-x-auto scroll-hide-scrollbar md:overflow-x-visible bg-white md:bg-transparent rounded-lg md:rounded-none card-shadow md:shadow-none mb-6 md:mb-0;
+}
+
+/* Ikon di dalam tombol tab */
+.tab-btn svg {
+  @apply flex-shrink-0;
+}
+
+/* Kolom Kanan (Konten) */
+.profile-content {
+  /* MENGHAPUS space-y-6 dari sini untuk memperbaiki bug spasi */
+  @apply md:col-span-9;
+}
+
+/* Card untuk tiap tab (Detail Akun, Ubah Password, dll) */
+.profile-card {
+  @apply bg-white rounded-xl card-shadow overflow-hidden p-6 md:p-8;
+}
+
+.profile-card-title {
+  @apply text-2xl font-bold text-gray-900 mb-6;
+}
+
+/* Styling untuk "Detail Akun" */
+.profile-details-list {
+  @apply divide-y divide-gray-200;
+}
+.profile-detail-item {
+  @apply py-4 grid grid-cols-3 gap-4 items-center;
+}
+.profile-detail-item dt {
+  /* "Nama Tampilan", "Username" */
+  /* PERUBAHAN: Dibuat lebih soft agar nilai (dd) lebih menonjol */
+  @apply text-sm text-gray-500;
+}
+.profile-detail-item dd {
+  /* "Memuat...", "user123" */
+  @apply text-sm text-gray-900 font-semibold col-span-2 break-words; /* Tambah break-words */
+}
+
+/* Styling untuk Form (Ubah Password, Ubah Email) */
+.profile-form {
+  @apply space-y-5 max-w-md;
+}
+.form-group {
+  @apply flex flex-col;
+}
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 mb-1.5;
+}
+.form-group input {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5;
+}
+
+/* Tombol dan Alert di dalam form */
+.form-actions {
+  @apply pt-2;
+}
+.btn {
+  /* base button style */
+  @apply px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition duration-150 ease-in-out;
+}
+.btn-primary {
+  @apply bg-primary text-white bg-primary-hover;
+}
+.form-alert {
+  @apply text-sm font-medium mt-3;
+}
+
+/* Styling untuk "Riwayat Transaksi" */
+.transaction-list {
+  @apply space-y-4 max-h-[450px] overflow-y-auto pr-2;
+}
+
+/* PERUBAHAN: Style item transaksi yang di-render oleh JS (diberi class .transaction-item) */
+.transaction-item {
+  @apply p-4 bg-gray-50 rounded-lg border space-y-3; /* Diberi space-y-3 */
+}
+.transaction-item-header {
+  /* Layout untuk Judul dan Harga */
+  @apply flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1;
+}
+.transaction-item-details {
+  @apply flex-grow; /* Nama produk & tanggal */
+}
+.transaction-item-price {
+  @apply flex-shrink-0 text-left sm:text-right; /* Harga & status */
+}
+.transaction-accounts-container {
+  /* Kontainer untuk daftar akun */
+  @apply space-y-2 pt-3 border-t border-gray-200;
+}
+.transaction-account-item {
+  /* Style untuk tiap akun (agar bisa wrap) */
+  @apply text-xs font-mono text-gray-800 bg-gray-200 px-2 py-1 rounded-md inline-block mr-1 mb-1;
+}

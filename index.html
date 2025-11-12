@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toko Digital Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Konfigurasi Font dan Warna Tailwind -->
+    <style>
+      :root {
+        --primary-color: #10b981; /* Emerald 500 */
+        --primary-hover: #059669; /* Emerald 600 */
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f3f4f6; /* Gray 100 */
+      }
+      .text-primary {
+        color: var(--primary-color);
+      }
+      .bg-primary {
+        background-color: var(--primary-color);
+      }
+      .bg-primary-hover:hover {
+        background-color: var(--primary-hover);
+      }
+      .focus-ring-primary:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px var(--primary-color);
+      }
+      .focus-ring-primary:focus-visible {
+        box-shadow: 0 0 0 2px var(--primary-color);
+      }
+      /* Style kustom untuk box shadow */
+      .card-shadow {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      .modal-shadow {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Perbaikan: Tab styling yang lebih modern */
+      .tab-btn {
+        @apply flex items-center gap-3 rounded-lg px-4 py-3 text-gray-600 transition;
+      }
+      .tab-btn.active {
+        @apply bg-emerald-100 text-primary font-semibold;
+      }
+      .tab-btn:not(.active):hover {
+        @apply bg-gray-200 text-gray-900;
+      }
+      .tab-content {
+        @apply hidden;
+      }
+      .tab-content.active {
+        @apply block;
+      }
+
+      /* Perbaikan: Style untuk mobile menu */
+      #mobile-menu {
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(100%);
+      }
+      #mobile-menu.open {
+        transform: translateX(0);
+      }
+    </style>
+    <!-- CSS Eksternal (Minimal) -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen flex flex-col antialiased">
+    <!-- Header -->
+    <header class="bg-white card-shadow sticky top-0 z-30">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+      >
+        <h1
+          id="logo"
+          class="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 mr-2 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+          <span class="text-primary">Mann</span>Shop
+        </h1>
+
+        <!-- Navigasi Desktop -->
+        <nav id="auth-nav" class="hidden sm:flex sm:items-center sm:gap-4">
+          <!-- Tampilan Belum Login -->
+          <div id="guest-nav" class="hidden items-center gap-4">
+            <button
+              id="nav-register-btn"
+              class="text-gray-600 hover:text-primary transition duration-150 ease-in-out font-medium"
+            >
+              Daftar
+            </button>
+            <button
+              id="nav-login-btn"
+              class="bg-primary text-white px-5 py-2 rounded-lg bg-primary-hover transition duration-150 ease-in-out font-medium shadow-sm hover:shadow-md"
+            >
+              Login
+            </button>
+          </div>
+
+          <!-- Tampilan Sudah Login -->
+          <div id="user-nav" class="hidden items-center gap-2">
+            <span
+              id="user-name-display"
+              class="font-medium text-gray-700 mr-2 text-sm sm:text-base"
+            ></span>
+            <button
+              id="nav-home-btn"
+              class="font-medium text-gray-700 text-sm sm:text-base hover:text-primary transition duration-150 ease-in-out bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg"
+            >
+              Home
+            </button>
+            <button
+              id="nav-profile-btn"
+              class="font-medium text-gray-700 text-sm sm:text-base hover:text-primary transition duration-150 ease-in-out bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg"
+            >
+              Profile
+            </button>
+            <button
+              id="nav-logout-btn"
+              class="text-red-500 hover:text-red-700 transition duration-150 ease-in-out font-medium text-sm sm:text-base hover:bg-red-50 px-4 py-2 rounded-lg"
+            >
+              Logout
+            </button>
+          </div>
+        </nav>
+
+        <!-- Tombol Hamburger Menu (Hanya Tampil di Mobile) -->
+        <button
+          id="mobile-menu-btn"
+          class="sm:hidden text-gray-700 hover:text-primary focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Menu (Hidden by default) -->
+    <div
+      id="mobile-menu-overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden sm:hidden"
+    ></div>
+    <div
+      id="mobile-menu"
+      class="fixed top-0 right-0 w-64 h-full bg-white shadow-xl z-40 p-6 sm:hidden"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-primary">Menu</h2>
+        <button
+          id="mobile-menu-close-btn"
+          class="text-gray-500 hover:text-gray-800"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <!-- Konten menu mobile diisi oleh JS -->
+      <nav id="mobile-nav-content" class="flex flex-col gap-4">
+        <!-- Diisi oleh script.js -->
+      </nav>
+    </div>
+
+    <!-- Notifikasi Global -->
+    <div
+      id="notification-container"
+      class="fixed top-20 right-5 z-50 space-y-2 w-72"
+    ></div>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <!-- Tampilan Kategori/Produk -->
+      <section id="product-view" class="space-y-6">
+        <div
+          class="flex flex-col sm:flex-row justify-between sm:items-center gap-4"
+        >
+          <div class="flex items-center gap-2">
+            <button
+              id="back-to-categories-btn"
+              class="hidden text-primary hover:text-emerald-700 transition duration-150 ease-in-out"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+            <h2 id="view-title" class="text-3xl font-bold text-gray-900">
+              Kategori Produk
+            </h2>
+          </div>
+          <div id="search-bar-container" class="hidden w-full sm:w-64">
+            <input
+              type="search"
+              id="search-input"
+              placeholder="Cari..."
+              class="w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+            />
+          </div>
+        </div>
+
+        <div
+          id="products-grid"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <!-- Skeleton Loader -->
+          <div
+            class="product-skeleton bg-white rounded-xl card-shadow overflow-hidden"
+          >
+            <div class="p-6 space-y-3 animate-pulse">
+              <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-8 bg-gray-300 rounded w-1/2"></div>
+              <div class="flex justify-between text-sm pt-3 border-t">
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+              <div class="h-10 bg-gray-300 rounded-lg mt-3"></div>
+            </div>
+          </div>
+          <div
+            class="product-skeleton bg-white rounded-xl card-shadow overflow-hidden hidden sm:block"
+          >
+            <div class="p-6 space-y-3 animate-pulse">
+              <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-8 bg-gray-300 rounded w-1/2"></div>
+              <div class="flex justify-between text-sm pt-3 border-t">
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+              <div class="h-10 bg-gray-300 rounded-lg mt-3"></div>
+            </div>
+          </div>
+          <div
+            class="product-skeleton bg-white rounded-xl card-shadow overflow-hidden hidden lg:block"
+          >
+            <div class="p-6 space-y-3 animate-pulse">
+              <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-8 bg-gray-300 rounded w-1/2"></div>
+              <div class="flex justify-between text-sm pt-3 border-t">
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+              <div class="h-10 bg-gray-300 rounded-lg mt-3"></div>
+            </div>
+          </div>
+        </div>
+        <p id="no-products-text" class="text-center text-gray-500 hidden py-10">
+          Belum ada produk yang tersedia saat ini.
+        </p>
+      </section>
+
+      <!-- PEROMBAKAN TOTAL: Tampilan Profile (Tata Letak 2 Kolom Modern) -->
+      <section id="profile-view" class="hidden space-y-6">
+        <h2 class="text-3xl font-bold text-gray-900 border-b pb-2">
+          Pengaturan Akun
+        </h2>
+
+        <div class="max-w-6xl mx-auto md:grid md:grid-cols-12 md:gap-8">
+          <!-- KOLOM KIRI: Navigasi dengan Icon -->
+          <div class="md:col-span-3">
+            <nav
+              id="profile-tabs"
+              class="flex md:flex-col p-4 space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto scroll-hide-scrollbar md:overflow-x-visible bg-white md:bg-transparent rounded-lg md:rounded-none card-shadow md:shadow-none mb-6 md:mb-0"
+            ></nav>
+          </div>
+
+          <!-- KOLOM KANAN: Konten -->
+          <div class="md:col-span-9">
+            <!-- Perbaikan: Setiap konten dibungkus card putih -->
+            <!-- Tab Content: Akun -->
+            <div
+              id="tab-akun"
+              class="tab-content active bg-white rounded-xl card-shadow overflow-hidden"
+            >
+              <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                  Detail Akun
+                </h2>
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 grid grid-cols-3 gap-4 items-center">
+                    <dt class="text-sm font-medium text-gray-600">
+                      Nama Tampilan
+                    </dt>
+                    <dd
+                      class="text-sm text-gray-900 font-semibold col-span-2"
+                      id="profile-name"
+                    >
+                      Memuat...
+                    </dd>
+                  </div>
+                  <div class="py-4 grid grid-cols-3 gap-4 items-center">
+                    <dt class="text-sm font-medium text-gray-600">Username</dt>
+                    <dd
+                      class="text-sm text-gray-900 font-semibold col-span-2"
+                      id="profile-username"
+                    >
+                      Memuat...
+                    </dd>
+                  </div>
+                  <div class="py-4 grid grid-cols-3 gap-4 items-center">
+                    <dt class="text-sm font-medium text-gray-600">Email</dt>
+                    <dd
+                      class="text-sm text-gray-900 font-semibold col-span-2"
+                      id="profile-email"
+                    >
+                      Memuat...
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+
+            <!-- Tab Content: Ubah Password -->
+            <div
+              id="tab-password"
+              class="tab-content bg-white rounded-xl card-shadow overflow-hidden"
+            >
+              <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                  Ubah Password
+                </h2>
+                <form id="change-password-form" class="space-y-5 max-w-md">
+                  <div>
+                    <label
+                      for="current-password"
+                      class="block text-sm font-medium text-gray-700 mb-1.5"
+                      >Password Saat Ini</label
+                    >
+                    <input
+                      type="password"
+                      id="current-password"
+                      required
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="new-password"
+                      class="block text-sm font-medium text-gray-700 mb-1.5"
+                      >Password Baru</label
+                    >
+                    <input
+                      type="password"
+                      id="new-password"
+                      required
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                    />
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      class="bg-primary text-white px-5 py-2.5 rounded-lg bg-primary-hover transition duration-150 ease-in-out font-medium shadow-sm hover:shadow-md"
+                    >
+                      Simpan Password
+                    </button>
+                    <div
+                      id="password-form-alert"
+                      class="text-sm font-medium hidden mt-3"
+                    ></div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Tab Content: Ubah Email -->
+            <div
+              id="tab-email"
+              class="tab-content bg-white rounded-xl card-shadow overflow-hidden"
+            >
+              <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                  Ubah Email
+                </h2>
+                <form id="change-email-form" class="space-y-5 max-w-md">
+                  <div>
+                    <label
+                      for="new-email"
+                      class="block text-sm font-medium text-gray-700 mb-1.5"
+                      >Email Baru</label
+                    >
+                    <input
+                      type="email"
+                      id="new-email"
+                      required
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="confirm-password-email"
+                      class="block text-sm font-medium text-gray-700 mb-1.5"
+                      >Password (untuk konfirmasi)</label
+                    >
+                    <input
+                      type="password"
+                      id="confirm-password-email"
+                      required
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                    />
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      class="bg-primary text-white px-5 py-2.5 rounded-lg bg-primary-hover transition duration-150 ease-in-out font-medium shadow-sm hover:shadow-md"
+                    >
+                      Simpan Email
+                    </button>
+                    <div
+                      id="email-form-alert"
+                      class="text-sm font-medium hidden mt-3"
+                    ></div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Tab Content: Riwayat Transaksi -->
+            <div
+              id="tab-transaksi"
+              class="tab-content bg-white rounded-xl card-shadow overflow-hidden"
+            >
+              <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                  Riwayat Transaksi
+                </h2>
+                <div
+                  id="transaction-list-container"
+                  class="space-y-4 max-h-[450px] overflow-y-auto pr-2"
+                >
+                  <p id="transaction-loading-text" class="text-gray-500">
+                    Memuat riwayat...
+                  </p>
+                  <!-- Riwayat diisi oleh JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tampilan Detail Produk (Modal) -->
+      <div
+        id="product-detail-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 z-40 hidden items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-xl modal-shadow w-full max-w-lg p-6 space-y-6 transform transition-all opacity-0 scale-95"
+          id="product-detail-content"
+        >
+          <!-- Konten diisi oleh JS -->
+        </div>
+      </div>
+
+      <!-- Modal Otentikasi (Login/Daftar) (Poin 7) -->
+      <div
+        id="auth-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 z-40 hidden items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-xl modal-shadow w-full max-w-sm p-6 space-y-6 transform transition-all opacity-0 scale-95"
+          id="auth-content"
+        >
+          <div class="flex justify-between items-start">
+            <h3 id="auth-title" class="text-2xl font-bold text-gray-900">
+              Login
+            </h3>
+            <button
+              onclick="closeModal('auth-modal')"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <form id="auth-form" class="space-y-4">
+            <!-- Field Nama Tampilan (hanya daftar) -->
+            <div id="name-field" class="hidden">
+              <label
+                for="auth-name"
+                class="block text-sm font-medium text-gray-700"
+                >Nama Tampilan</label
+              >
+              <input
+                type="text"
+                id="auth-name"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+              />
+            </div>
+            <!-- Field Username (hanya daftar) -->
+            <div id="username-field" class="hidden">
+              <label
+                for="auth-username"
+                class="block text-sm font-medium text-gray-700"
+                >Username
+                <span class="text-xs text-gray-500">(untuk login)</span></label
+              >
+              <input
+                type="text"
+                id="auth-username"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+              />
+            </div>
+            <!-- Field Email (hanya daftar) -->
+            <div id="email-field" class="hidden">
+              <label
+                for="auth-email"
+                class="block text-sm font-medium text-gray-700"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="auth-email"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+              />
+            </div>
+            <!-- Field Login (Username/Email) (hanya login) -->
+            <div id="login-field">
+              <label
+                for="auth-login"
+                class="block text-sm font-medium text-gray-700"
+                >Username atau Email</label
+              >
+              <input
+                type="text"
+                id="auth-login"
+                required
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+              />
+            </div>
+            <!-- Field Password (login & daftar) -->
+            <div>
+              <label
+                for="auth-password"
+                class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="auth-password"
+                required
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="auth-submit-btn"
+              class="w-full bg-primary text-white py-2 rounded-lg font-bold bg-primary-hover transition duration-150 ease-in-out shadow-md"
+            >
+              Login
+            </button>
+            <div
+              id="auth-error-message"
+              class="text-red-500 font-medium text-center hidden"
+            ></div>
+          </form>
+
+          <p class="text-center text-sm">
+            <span id="toggle-auth-text">Belum punya akun?</span>
+            <button
+              type="button"
+              id="toggle-auth-btn"
+              class="text-primary hover:text-emerald-600 font-medium"
+            >
+              Daftar sekarang
+            </button>
+          </p>
+        </div>
+      </div>
+
+      <!-- Modal Status Order (Sukses/QRIS) -->
+      <div
+        id="order-status-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 z-40 hidden items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-xl modal-shadow w-full max-w-lg p-6 space-y-6 transform transition-all opacity-0 scale-95"
+          id="order-status-content"
+        >
+          <!-- Konten diisi oleh JS -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+      <div class="max-w-7xl mx-auto text-center text-sm">
+        &copy; 2025 MannShop.
+      </div>
+    </footer>
+
+    <!-- Template HTML untuk Modal Detail Produk -->
+    <template id="product-detail-template">
+      <div class="flex justify-between items-start">
+        <h3
+          id="detail-product-name"
+          class="text-2xl font-bold text-gray-900"
+        ></h3>
+        <button
+          onclick="closeModal('product-detail-modal')"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-sm text-gray-600">
+        <p>
+          <strong>Kode:</strong>
+          <span id="detail-product-id" class="font-mono text-gray-800"></span>
+        </p>
+        <p>
+          <strong>Harga:</strong>
+          <span
+            id="detail-product-price"
+            class="text-xl font-extrabold text-primary"
+          ></span>
+        </p>
+        <p>
+          <strong>Terjual:</strong>
+          <span id="detail-product-terjual"></span> pcs
+        </p>
+        <p>
+          <strong>Sisa Stok:</strong>
+          <span id="detail-product-stock" class="font-bold text-lg"></span>
+        </p>
+        <p class="pt-2"><strong>Deskripsi:</strong></p>
+        <p
+          id="detail-product-desc"
+          class="bg-gray-50 p-3 rounded-lg max-h-32 overflow-y-auto"
+        ></p>
+      </div>
+
+      <form id="order-form" class="space-y-4 pt-4 border-t">
+        <h4 class="text-lg font-bold text-gray-800">Form Pemesanan</h4>
+        <div>
+          <label
+            for="order-quantity"
+            class="block text-sm font-medium text-gray-700"
+            >Jumlah Pesanan</label
+          >
+          <input
+            type="number"
+            id="order-quantity"
+            value="1"
+            min="1"
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus-ring-primary"
+          />
+        </div>
+        <div class="text-xl font-bold text-right text-gray-800">
+          Total: <span id="order-total-price" class="text-primary">Rp 0</span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            type="submit"
+            data-method="saldo"
+            class="flex-1 bg-primary text-white py-3 rounded-lg font-bold bg-primary-hover transition duration-150 ease-in-out shadow-md"
+          >
+            Bayar Via Saldo
+          </button>
+          <button
+            type="submit"
+            data-method="qris"
+            class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition duration-150 ease-in-out shadow-md"
+          >
+            Bayar Via QRIS
+          </button>
+        </div>
+        <div
+          id="order-alert-message"
+          class="text-red-500 font-medium text-center hidden"
+        ></div>
+      </form>
+    </template>
+
+    <!-- Template untuk Form Login di Modal Detail -->
+    <template id="login-prompt-template">
+      <div class="flex justify-between items-start">
+        <h3 class="text-2xl font-bold text-gray-900">Anda Belum Login</h3>
+        <button
+          onclick="closeModal('product-detail-modal')"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="p-4 border border-red-200 rounded-lg text-center">
+        <p class="text-red-600 font-bold">
+          Anda harus login terlebih dahulu untuk memesan.
+        </p>
+        <div class="flex gap-4 mt-4">
+          <button
+            type="button"
+            class="flex-1 text-gray-700 bg-gray-100 py-2 rounded-lg font-bold hover:bg-gray-200"
+            onclick="closeModal('product-detail-modal'); showModal('auth-modal'); toggleAuthMode(true);"
+          >
+            Daftar
+          </button>
+          <button
+            type="button"
+            class="flex-1 bg-primary text-white py-2 rounded-lg font-bold bg-primary-hover"
+            onclick="closeModal('product-detail-modal'); showModal('auth-modal'); toggleAuthMode(false);"
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template untuk Modal Status Order -->
+    <template id="order-status-template">
+      <div class="flex justify-between items-start">
+        <h3 id="status-title" class="text-2xl font-bold text-gray-900"></h3>
+        <button
+          onclick="closeModal('order-status-modal')"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div id="status-content" class="space-y-4">
+        <!-- Konten status diisi oleh JS -->
+      </div>
+      <button
+        onclick="closeModal('order-status-modal')"
+        class="w-full bg-primary text-white py-2 rounded-lg font-bold bg-primary-hover transition duration-150 ease-in-out shadow-md"
+      >
+        Tutup
+      </button>
+    </template>
+
+    <!-- Script JavaScript Eksternal -->
+    <script src="script.js"></script>
+  </body>
+</html>
